@@ -1,0 +1,110 @@
+﻿/* 
+--- Day 3: Perfectly Spherical Houses in a Vacuum ---
+Santa is delivering presents to an infinite two-dimensional grid of houses.
+
+He begins by delivering a present to the house at his starting location, and then an elf at the North Pole calls him via radio and tells him where to move next. Moves are always exactly one house to the north (^), south (v), east (>), or west (<). After each move, he delivers another present to the house at his new location.
+
+However, the elf back at the north pole has had a little too much eggnog, and so his directions are a little off, and Santa ends up visiting some houses more than once. How many houses receive at least one present?
+
+For example:
+
+> delivers presents to 2 houses: one at the starting location, and one to the east.
+^>v< delivers presents to 4 houses in a square, including twice to the house at his starting/ending location.
+^v^v^v^v^v delivers a bunch of presents to some very lucky children at only 2 houses.
+ input file: d:\SOURCE\AdventOfCode\AC-2015-03\adventofcode.com_2015_day_3_input.txt 
+ */
+
+using System.Diagnostics;
+using System.IO;
+
+string inputFileName = @"d:\SOURCE\AdventOfCode\AC-2015-03\adventofcode.com_2015_day_3_input.txt";
+string text = File.ReadAllText(inputFileName);
+char[] instructions = text.ToCharArray();
+string outputFileName = @"d:\SOURCE\AdventOfCode\AC-2015-03\output.txt";
+
+
+int[,] mapOfHouses = new int[115, 90];
+// zjistil jsem tím, že jsem si to jednou pustil na sucho, předělat na něco elegantnějšího
+// takto inicializované je rovnou naplněné nulama, nemusím ho předvyplňovat
+
+// zjisti jak daleko od stredu se dostaneme
+int horizontal = 1;
+int vertical = 0;
+int leftSize = 0;
+int rightSize = 0;
+int upSize = 0;
+int downSize = 0;
+int horizontalOffset = 77;
+int verticalOffset = 8;
+int pocetDomuSAlesponJednimDarkem = 0;
+int steps = 0;
+
+mapOfHouses[horizontal - 1 + horizontalOffset, vertical + verticalOffset]++; // Santa vyráží z domu, kde už jeden dárek rozdal
+foreach (char instruction in instructions)
+{
+    steps++;
+    switch (instruction)
+    {
+        case '<':
+            horizontal--;
+            if (horizontal < leftSize) leftSize--;
+            mapOfHouses[horizontal + horizontalOffset, vertical + verticalOffset]++;
+            break;
+
+        case '^':
+            vertical++;
+            if (vertical > upSize) upSize++;
+            mapOfHouses[horizontal + horizontalOffset, vertical + verticalOffset]++;
+            break;
+
+        case '>':
+            horizontal++;
+            if (horizontal > rightSize) rightSize++;
+            mapOfHouses[horizontal + horizontalOffset, vertical + verticalOffset]++;
+            break;
+
+        case 'v':
+            vertical--;
+            if (vertical < downSize) downSize--;
+            mapOfHouses[horizontal + horizontalOffset, vertical + verticalOffset]++;
+            break;
+
+        default:
+            Console.WriteLine("Tenhle znak jsem v souboru nečekal!");
+            break;
+    }
+}
+
+Console.WriteLine($"Size of the map:");
+Console.WriteLine($"\t{upSize}");
+Console.WriteLine($"{leftSize}\tx\t{rightSize}");
+Console.WriteLine($"\t{downSize}");
+
+
+File.WriteAllText(outputFileName, String.Empty);
+Console.WriteLine("Mapa Santovo návštěv:\n");
+File.AppendAllText(outputFileName, "Mapa Santovo návštěv:\n");
+
+int charCounter = 0;
+int presentsCounter = 0;
+
+
+for (int i = 0; i < mapOfHouses.GetLength(0); i++)
+{
+    charCounter = 0;
+    for (int j = 0; j < mapOfHouses.GetLength(1); j++)
+    {
+        Console.Write($"|{mapOfHouses[i, j]}");
+        File.AppendAllText(outputFileName, $"|{mapOfHouses[i, j]}");
+        presentsCounter += mapOfHouses[i, j];
+
+        charCounter++;
+        if (mapOfHouses[i, j] > 0) pocetDomuSAlesponJednimDarkem++;
+    }
+
+    Console.WriteLine($"| {charCounter}");
+    File.AppendAllText(outputFileName, $"| {charCounter}\n");
+}
+Console.WriteLine($"\n\nPočet domů s alespoň jedním dárkemje: {pocetDomuSAlesponJednimDarkem}");
+Console.WriteLine($"Santa podnikl {steps} návštěv.");
+Console.WriteLine($"Santa rozdal {presentsCounter} dárků.");
