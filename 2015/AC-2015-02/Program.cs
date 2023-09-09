@@ -26,7 +26,7 @@ input file: d:\SOURCE\AdventOfCode\AC-2015-02\adventofcode.com_2015_day_2_input.
  */
 using System.IO;
 
-string fileName = @"d:\SOURCE\AdventOfCode\AC-2015-02\adventofcode.com_2015_day_2_input.txt";
+string fileName = @"adventofcode.com_2015_day_2_input.txt";
 string[] lines = File.ReadAllLines(fileName);
 string[] dimensionStrings;
 int[] dimensionInts;
