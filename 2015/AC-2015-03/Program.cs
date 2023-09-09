@@ -31,10 +31,10 @@ For example:
 using System.Diagnostics;
 using System.IO;
 
-string inputFileName = @"d:\SOURCE\AdventOfCode\AC-2015-03\adventofcode.com_2015_day_3_input.txt";
+string inputFileName = @"adventofcode.com_2015_day_3_input.txt";
 string text = File.ReadAllText(inputFileName);
 char[] instructions = text.ToCharArray();
-string outputFileName = @"d:\SOURCE\AdventOfCode\AC-2015-03\output.txt";
+string outputFileName = @"output.txt";
 
 
 int[,] mapOfHouses = new int[110, 90];
@@ -162,6 +162,6 @@ for (int i = 0; i < mapOfHouses.GetLength(0); i++)
     Console.WriteLine($"| {charCounter}");
     File.AppendAllText(outputFileName, $"| {charCounter}\n");
 }
-Console.WriteLine($"\n\nPočet domů s alespoň jedním dárkemje: {pocetDomuSAlesponJednimDarkem}");
+Console.WriteLine($"\n\nPočet domů s alespoň jedním dárkem je: {pocetDomuSAlesponJednimDarkem}");
 Console.WriteLine($"Santa podnikl {steps} návštěv.");
 Console.WriteLine($"Santa rozdal {presentsCounter} dárků.");
