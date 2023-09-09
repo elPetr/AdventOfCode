@@ -40,7 +40,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
-string fileName = @"d:\SOURCE\AdventOfCode\AC-2015-05\adventofcode.com_2015_day_5_input.txt";
+string fileName = @"adventofcode.com_2015_day_5_input.txt";
 string[] lines = File.ReadAllLines(fileName);
 int nastyWordsCount = 0;
 int niceWordsCount = 0;
@@ -50,7 +50,10 @@ string searchBadStrings = @"(ab|cd|pq|xy)";
 
 foreach (string line in lines)
 {
-    bool hasThreeWovels = Regex.IsMatch(line, searchThreeWovels);
+    // tip od Matějena optimalizaci, regex umí být náročný, u většího projektu by se vyplatilo
+    // to z hasThreeWovels při false rovnou pustit do "nasty" a ušetřit si další regexy
+    // to samé hasDoubleLetter ... a sařadit je od nejméně náročného k náročnému
+    bool hasThreeWovels = Regex.IsMatch(line, searchThreeWovels); 
     bool hasDoubleLetter = Regex.IsMatch(line, searchDoubleLetter);
     bool doesNotHaveBadStrings = !Regex.IsMatch(line, searchBadStrings);
     if (hasThreeWovels && hasDoubleLetter && doesNotHaveBadStrings)
