@@ -14,25 +14,6 @@ turn on 0,0 through 999,999 would turn on (or leave on) every light.
 toggle 0,0 through 999,0 would toggle the first line of 1000 lights, turning off the ones that were on, and turning on the ones that were off.
 turn off 499,499 through 500,500 would turn off (or leave off) the middle four lights.
 After following the instructions, how many lights are lit?
-------------------------------------------------------------------------------------------------------------------
---- Part Two ---
-You just finish implementing your winning light pattern when you realize you mistranslated Santa's message from Ancient Nordic Elvish.
-
-The light grid you bought actually has individual brightness controls; each light can have a brightness of zero or more. The lights all start at zero.
-
-The phrase turn on actually means that you should increase the brightness of those lights by 1.
-
-The phrase turn off actually means that you should decrease the brightness of those lights by 1, to a minimum of zero.
-
-The phrase toggle actually means that you should increase the brightness of those lights by 2.
-
-What is the total brightness of all lights combined after following Santa's instructions?
-
-For example:
-
-turn on 0,0 through 0,0 would increase the total brightness by 1.
-toggle 0,0 through 999,999 would increase the total brightness by 2000000.
-------------------------------------------------------------------------------------------------------------------------
 
 input file: d:\SOURCE\AdventOfCode\AC-2015-06\adventofcode.com_2015_day_6_input.txt 
  */
@@ -69,20 +50,19 @@ foreach (string line in lines)
             {
                 case "on":
                 {
-                    lightsGrid[x,y] += 1;
+                    lightsGrid[x,y] = 1;
                     break;
                 }
                 
                 case "off":
                 {
-                    if (lightsGrid[x,y] > 0) lightsGrid[x,y] -= 1;
+                    lightsGrid[x,y] = 0;
                     break;
                 }
                 
                 case "toggle":
                 {
-                    lightsGrid[x,y] += 2;
-                    // lightsGrid[x,y] = (lightsGrid[x,y] == 1) ? 0 : 1; // pravidlo z casti 1
+                    lightsGrid[x,y] = (lightsGrid[x,y] == 1) ? 0 : 1;
                     break;
                 }
                 default:
@@ -95,8 +75,8 @@ foreach (string line in lines)
     }
 }
 
-string outputFileName = @"output.txt";
-File.WriteAllText(outputFileName, String.Empty);
+//string outputFileName = @"output.txt";
+//File.WriteAllText(outputFileName, String.Empty);
 // zapis do souboru jsem udělal, ale hodně to zdržuje, budu muset optimalizovat, psát po řádcích, nebo stream??
 int numberOfLightsOn = 0;
 
@@ -104,10 +84,10 @@ for (int i = 0; i < lightsGrid.GetLength(0); i++)
 {
     for (int j = 0; j < lightsGrid.GetLength(1); j++)
     {
-        File.AppendAllText(outputFileName , $"{lightsGrid[i,j]},");
+        //File.AppendAllText(outputFileName , lightsGrid[i,j].ToString());
         numberOfLightsOn += lightsGrid[i,j];
     }
-    File.AppendAllText(outputFileName , "\n");
+    //File.AppendAllText(outputFileName , "\n");
 }
 
 Console.WriteLine($"Number of lights ON: {numberOfLightsOn}");
