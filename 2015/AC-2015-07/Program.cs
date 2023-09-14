@@ -37,28 +37,130 @@ x: 123
 y: 456
 In little Bobby's kit's instructions booklet (provided as your puzzle input), what signal is ultimately provided to wire a?
 ---------------------------------------------------------------------------------------------------------------------------
-input file: d:\SOURCE\AdventOfCode\2015\AC-2015-07\adventofcode.com_2015_day_7_input.txt 
+input file: d:\SOURCE\AdventOfCode\2015\AC-2015-07\adventofcode.com_2015_day_7_input.txt
+
+Your puzzle answer was 956.
+
+--- Part Two ---
+Now, take the signal you got on wire a, override wire b to that signal, and reset the other wires (including wire a). What new signal is ultimately provided to wire a?
+input file2: d:\SOURCE\AdventOfCode\2015\AC-2015-07\adventofcode.com_2015_day_7_input-B.txt
+Your puzzle answer was 40149.
  */
 
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
-string fileName = @"adventofcode.com_2015_day_7_input.txt";
-string[] lines = File.ReadAllLines(fileName);
-string[] parsedLine;
-string lineTMP;
-
-foreach (string line in lines)
+void Main()
 {
-    parsedLine = line.Split(' '); //tak bacha, tady to bude jinak
-    //nacist operace do pole, ale muzou mit ruzny pocet polozek
-    // asi jit od parsedLine.Length dolu a pokud je  delka 5 vzit to cele, pokud jen 4 nebo 3 tak fork
+    string fileName = @"adventofcode.com_2015_day_7_input.txt";  //prohodit za adventofcode.com_2015_day_7_input-B.txt pro druhou půlku úkolu
+    string[] lines = File.ReadAllLines(fileName);
+    List<string> unsolvedLinesList = new List<string>(lines);
+    List<string> solvedLinesList = new List<string>();
+    Dictionary<string, int> components = new Dictionary<string, int>();
 
+    do
+    {
+        for (int i = 0; i < unsolvedLinesList.Count; i++)
+        {
+            string line = unsolvedLinesList[i];
+            try
+            {
+                ProcessLine(line, components);
+                solvedLinesList.Add(line);
+                unsolvedLinesList.RemoveAt(i);
+    
+            }
+            catch (KeyNotFoundException)
+            {
+              // Console.WriteLine($"Line: {i} skipped.");
+            }
+            
+        }
+        Console.WriteLine($"Solved lines: {solvedLinesList.Count}");
+        Console.WriteLine($"Unsolved lines: {unsolvedLinesList.Count}");
+    } while (unsolvedLinesList.Count > 0);
 
-    // lightsAction = parsedLine[0];
-    // x1 = int.Parse(parsedLine[1]);
-    // y1 = int.Parse(parsedLine[2]);
-    // x2 = int.Parse(parsedLine[3]);
-    // y2 = int.Parse(parsedLine[4]);
+    printComponents(components);
 }
+
+void ProcessLine(string line, Dictionary<string, int> components)
+{
+    string[] parsedLine = line.Split(' '); //tak bacha, tady to bude jinak
+    int operandInt1;
+    int operandInt2;
+
+    switch ((parsedLine.Length))
+    {
+        case 3:
+            {
+                //Console.WriteLine($"{parsedLine[0]}\t{parsedLine[1]}\t{parsedLine[2]}");
+                if (!(int.TryParse(parsedLine[0], out operandInt1)))
+                {
+                    operandInt1 = components[parsedLine[0]];
+                }
+
+                components[parsedLine[2]] = operandInt1;
+                break;
+            }
+        case 4:
+            {
+                // Console.WriteLine($"{parsedLine[0]}\t{parsedLine[1]}\t{parsedLine[2]}\t{parsedLine[3]}");
+               components[parsedLine[3]] = ~components[parsedLine[1]];
+                break;
+            }
+        case 5:
+            {
+                //Console.WriteLine($"{parsedLine[0]}\t{parsedLine[1]}\t{parsedLine[2]}\t{parsedLine[3]}\t{parsedLine[4]}");
+                if (!(int.TryParse(parsedLine[0], out operandInt1)))
+                {
+                    operandInt1 = components[parsedLine[0]];
+                }
+                if (!(int.TryParse(parsedLine[2], out operandInt2)))
+                {
+                    operandInt2 = components[parsedLine[2]];
+                }
+                switch (parsedLine[1])
+                {
+                    case "AND":
+                        components[parsedLine[4]] = operandInt1 & operandInt2;
+                        break;
+                    case "OR":
+                        components[parsedLine[4]] = operandInt1 | operandInt2;
+                        break;
+                    case "RSHIFT":
+                        components[parsedLine[4]] = operandInt1 >> operandInt2;
+                        break;
+                    case "LSHIFT":
+                        components[parsedLine[4]] = operandInt1 << operandInt2;
+                        break;
+                    default:
+                        Console.WriteLine($"Nečekaný 5-ti člen: {parsedLine[0]}\t{parsedLine[1]}\t{parsedLine[2]}\t{parsedLine[3]}\t{parsedLine[4]}");
+                    break;
+                }
+                break;
+            }           
+        default:
+            break;
+    }
+}
+
+void printComponents(Dictionary<string, int> components)
+{
+    Console.WriteLine($"Přehled komponentů a jejich hodnot:\n===================================");
+    foreach (KeyValuePair<string, int> component in components)
+    {
+        Console.WriteLine($"{component.Key}\t{component.Value}");
+    }
+}
+
+Main();
+// postup
+//nacist operace do pole, ale muzou mit ruzny pocet polozek
+// napravo je vždy proměnná
+// řešit zvlášť
+// 3 prvky - proměnná nebo číslo = proměnná
+// 4 prvky - NOT proměnná = proměnná
+// 5 prvků - číslo/proměnná OPERATOR číslo/proměnná = proměnná
+// postupně procházet pole a vyřešené řádky ukládat do Slovníku ve formátu proměnná, číslo
