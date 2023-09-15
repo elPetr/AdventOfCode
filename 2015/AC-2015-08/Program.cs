@@ -12,6 +12,7 @@ raw string literals
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 internal class Program
 {
@@ -50,14 +51,35 @@ internal class Program
 
     static void CountStringSizes(string path)
     {
+        // string searchUnicodeHexas = @"\\x[0-9a-fA-F]{1,2}";
         int totalLengthOfStrings = 0;
         string[] lines = File.ReadAllLines(path);
+        Regex rx = new Regex(@"\\x[0-9a-fA-F]{1,2}")
+        MatchCollection matches;
+        string tmpLine = "";
         foreach (var line in lines)
         {
+            tmpLine = line;
+            matches = rx.Matches(line)
+            if (rx.IsMatch(line);)
+            {
+                foreach (var match in matches)
+                {
+                    tmpLine.Replace(match,"") // "" přehodit na přfvedený unicode znak
+                }
+            }
             System.Console.WriteLine(line);
-            totalLengthOfStrings += line.Replace(" ", "").Length;
+            //totalLengthOfStrings += line.Replace(" ", "").Length; // to asi nebude potřeba a pokud, tak přehodit na tmpLine
         }
         System.Console.WriteLine($"Number of characters in strings: {totalLengthOfStrings}");
 
     }
 }
+
+/* Operace se stringem:
+1 NAHRADIT: Unicode znaky mají backslash x a dvouciferné hexačíslo = (dva znaky číslice nabo a..f A..F)  Př. \x1a
+  \\x[0-9a-fA-F]{1,2}
+2 ODEBRAT backslash před úvozovkama
+3 ODEBRAT úvozovky na začátku a na konci
+4 NAHRADIT zdvojený backslash (ale bacha, co když někde budou 3 za sebou?)
+*/
